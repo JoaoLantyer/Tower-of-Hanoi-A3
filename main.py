@@ -1,8 +1,13 @@
+import time
+
 movimentos = []
+contador_movimentos = 0
+primeiro_turno = True
 
 class Pilha:
-    def __init__(self):
+    def __init__(self, nome):
         self.itens = []
+        self.nome = nome
 
     def empilhar(self, x):
         self.itens.append(x)
@@ -42,6 +47,7 @@ def inicializar(pino1, discos):
         discos[0] = int(input())
     except ValueError:
         print("Digite um número inteiro!")
+        return 1
     tamanho = discos[0]
     if discos[0] not in range(2, 51):
         print("\nNúmero de discos inválido!")
@@ -58,7 +64,17 @@ def terminar(pino1, pino2, pino3):
 
 
 def movimentar(pino1, pino2, pino3):
-    movimento = input("Digite qual destes movimentos você deseja realizar: ").upper()
+    global primeiro_turno
+    if primeiro_turno:
+        movimento = input("Digite qual destes movimentos você deseja realizar (ou digite 'RESOLVA PARA MIM' para resolver automaticamente): ").upper()
+    else:
+        movimento = input("Digite qual destes movimentos você deseja realizar: ").upper()
+
+    if primeiro_turno and movimento == "RESOLVA PARA MIM":
+        resolver_para_mim(pino1, pino2, pino3, tamanho)
+        primeiro_turno = False
+        return 6
+
     if movimento[0] not in ["A", "B", "C"] or movimento[1] not in ["A", "B", "C"]:
         print("\n MOVIMENTO INVÁLIDO! \n")
         return 2
@@ -82,7 +98,10 @@ def movimentar(pino1, pino2, pino3):
 
     if mover(origem, destino) == 0:
         return 4
-    movimentos.append(f"{movimento[0]}" + f"{movimento[1]}")
+    global contador_movimentos
+    contador_movimentos += 1
+    movimentos.append(f"{movimento[0]}{movimento[1]}")
+    primeiro_turno = False
     return 5
 
 
@@ -120,11 +139,29 @@ def mostrar_possibilidades(pino1, pino2, pino3):
         print("CB ", end="")
     print()
 
+
+def resolver_para_mim(pino1, pino2, pino3, n):
+    
+    def resolver(n, origem, destino, auxiliar):
+        if n == 0:
+            return
+        resolver(n - 1, origem, auxiliar, destino)
+        destino.empilhar(origem.desempilhar())
+        global contador_movimentos
+        contador_movimentos += 1
+        movimentos.append((origem.nome, destino.nome))
+        mostrar_pinos(pino1, pino2, pino3)
+        time.sleep(0.5)
+        resolver(n - 1, auxiliar, destino, origem)
+
+    resolver(n, pino1, pino3, pino2)
+
+
 def main():
     discos = [0]
-    A = Pilha()
-    B = Pilha()
-    C = Pilha()
+    A = Pilha("A")
+    B = Pilha("B")
+    C = Pilha("C")
     estado = inicializar(A, discos)
 
     while estado != 1000:
@@ -151,7 +188,9 @@ def main():
     print("Parabéns!")
     print("Jogo finalizado!")
 
-    print(f"Movimentos realizados em ordem: {movimentos}\n")
+    movimentos_formatados = " ".join([f"{origem}{destino}" for origem, destino in movimentos])
+    print(f"Movimentos realizados em ordem: {movimentos_formatados}")
+    print(f"Total de movimentos: {contador_movimentos}\n")
 
 if __name__ == "__main__":
     main()
