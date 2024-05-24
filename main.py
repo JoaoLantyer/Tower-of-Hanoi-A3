@@ -1,9 +1,5 @@
 import time
 
-movimentos = []
-contador_movimentos = 0
-primeiro_turno = True
-
 class Pilha:
     def __init__(self, nome):
         self.itens = []
@@ -151,46 +147,59 @@ def resolver_para_mim(pino1, pino2, pino3, n):
         contador_movimentos += 1
         movimentos.append((origem.nome, destino.nome))
         mostrar_pinos(pino1, pino2, pino3)
-        time.sleep(0.5)
+        time.sleep(0.1)
         resolver(n - 1, auxiliar, destino, origem)
 
     resolver(n, pino1, pino3, pino2)
 
+def iniciar_variaveis():
+    global movimentos
+    global contador_movimentos
+    global primeiro_turno
+    movimentos = []
+    contador_movimentos = 0
+    primeiro_turno = True
 
 def main():
-    discos = [0]
-    A = Pilha("A")
-    B = Pilha("B")
-    C = Pilha("C")
-    estado = inicializar(A, discos)
+    while True:
+        iniciar_variaveis()
+        discos = [0]
+        A = Pilha("A")
+        B = Pilha("B")
+        C = Pilha("C")
+        estado = inicializar(A, discos)
 
-    while estado != 1000:
-        if estado == 1:
-            estado = inicializar(A, discos)
-        elif estado == 2:
-            mostrar_pinos(A, B, C)
-            estado = 3
-        elif estado == 3:
-            mostrar_possibilidades(A, B, C)
-            estado = 4
-        elif estado == 4:
-            estado = movimentar(A, B, C)
-        elif estado == 5:
-            if C.tamanho() == discos[0]:
-                estado = 6
-            else:
-                estado = 2
-        elif estado == 6:
-            mostrar_pinos(A, B, C)
-            terminar(A, B, C)
-            estado = 1000
+        while estado != 1000:
+            if estado == 1:
+                estado = inicializar(A, discos)
+            elif estado == 2:
+                mostrar_pinos(A, B, C)
+                estado = 3
+            elif estado == 3:
+                mostrar_possibilidades(A, B, C)
+                estado = 4
+            elif estado == 4:
+                estado = movimentar(A, B, C)
+            elif estado == 5:
+                if C.tamanho() == discos[0]:
+                    estado = 6
+                else:
+                    estado = 2
+            elif estado == 6:
+                mostrar_pinos(A, B, C)
+                terminar(A, B, C)
+                estado = 1000
 
-    print("Parabéns!")
-    print("Jogo finalizado!")
+        print("Parabéns!")
+        print("Jogo finalizado!")
 
-    movimentos_formatados = " ".join([f"{origem}{destino}" for origem, destino in movimentos])
-    print(f"Movimentos realizados em ordem: {movimentos_formatados}")
-    print(f"Total de movimentos: {contador_movimentos}\n")
+        movimentos_formatados = " ".join([f"{origem}{destino}" for origem, destino in movimentos])
+        print(f"Movimentos realizados em ordem: {movimentos_formatados}")
+        print(f"Total de movimentos: {contador_movimentos}\n")
+
+        escolha = input("Deseja jogar novamente? Digite SIM para reiniciar ou qualquer outra palavra para encerrar: ").upper()
+        if escolha != "SIM":
+            break
 
 if __name__ == "__main__":
     main()
