@@ -15,7 +15,6 @@ Depois de instalado execute o script com o comando:
 
 ```
 python main.py
-
 ```
 
 
