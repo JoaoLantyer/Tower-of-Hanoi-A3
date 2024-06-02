@@ -1,5 +1,3 @@
-import time
-
 class Pilha:
     def __init__(self, nome):
         self.itens = []
@@ -147,7 +145,6 @@ def resolver_para_mim(pino1, pino2, pino3, n):
         contador_movimentos += 1
         movimentos.append((origem.nome, destino.nome))
         mostrar_pinos(pino1, pino2, pino3)
-        time.sleep(0.1)
         resolver(n - 1, auxiliar, destino, origem)
 
     resolver(n, pino1, pino3, pino2)
